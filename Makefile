@@ -15,33 +15,36 @@ CFLAGS = -Wall -Werror -Wextra
 NAME = libftprintf.a
 
 LIBDIR = ./libft
-LIBFT = ${LIBDIR}/libft.a
+LIBFT = $(LIBDIR)/libft.a
 
 SRC = ft_printf.c ft_print_char.c ft_print_digit.c ft_print_hex.c \
 	ft_print_ptr.c ft_print_str.c ft_print_undigit.c
 
-OBJ = ${SRC:.c=.o}
+OBJDIR = obj
+OBJ = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
 
-%.o: %.c
-		${CC} ${CFLAGS} -o $@ -c $< -I .
+$(OBJDIR)/%.o: %.c
+		@mkdir -p $(OBJDIR)
+		$(CC) $(CFLAGS) -o $@ -c $< -I .
 
-${NAME}: ${LIBFT} ${OBJ}
-		cp ${LIBFT} ${NAME}
-		ar -rcs $@ ${OBJ}
+$(NAME): $(LIBFT) $(OBJ)
+		cp $(LIBFT) $(NAME)
+		ar -rcs $@ $(OBJ)
 
-${LIBFT}:
-		${MAKE} -C ${LIBDIR} all
+$(LIBFT):
+		$(MAKE) -C $(LIBDIR) all
 
-all: ${NAME}
+all: $(NAME)
 
 .PHONY: clean fclean all re
 
 clean: 
-		${MAKE} -C ${LIBDIR} clean
-		rm -f ${OBJ} ${OBJ_B}
+		$(MAKE) -C $(LIBDIR) clean
+		rm -f $(OBJ)
+		rm -rf $(OBJDIR)
 
 fclean: clean
-		${MAKE} -C ${LIBDIR} fclean
-		rm -rf ${NAME}
+		$(MAKE) -C $(LIBDIR) fclean
+		rm -rf $(NAME)
 
 re: fclean all
